@@ -2,3 +2,15 @@ main: uk.co.harieo.eggs.Eggs
 version: 1.0.0
 name: Eggs
 author: Harieo
+depend:
+    - MinigamesCore
+
+commands:
+    force:
+        description: 'Forces the game to start'
+        permission: 'quacktopia.minigames.force'
+
+permissions:
+    quacktopia.minigames.force:
+        description: 'Allows the use of /force'
+        default: op

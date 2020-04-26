@@ -15,7 +15,7 @@ public class TeamScoreElement implements RenderableElement {
 		if (team != null) {
 			score = team.getScore();
 		}
-		return score + " Points";
+		return score + " " + (score == 1 ? "Point" : "Points");
 	}
 
 }

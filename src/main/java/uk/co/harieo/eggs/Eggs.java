@@ -5,11 +5,14 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.Random;
+import uk.co.harieo.eggs.commands.ForceStartCommand;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.ChatListener;
 import uk.co.harieo.eggs.listeners.ConnectionListener;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
+import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.games.Minigame;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
@@ -20,10 +23,11 @@ public class Eggs extends Minigame {
 
 	public static final char ARROWS = '»';
 	public static final String PREFIX =
-			ChatColor.GOLD.toString() + ChatColor.BOLD + "Nests " + ChatColor.DARK_GRAY + ARROWS + " ";
+			ChatColor.GREEN.toString() + ChatColor.BOLD + "Eggs " + ChatColor.DARK_GRAY + ARROWS + " ";
 	public static final ConstantElement IP_ELEMENT = new ConstantElement(
 			ChatColor.GRAY + ChatColor.BOLD.toString() + "play." + ChatColor.YELLOW + ChatColor.BOLD
 					+ "Quacktopia" + ChatColor.GRAY + ChatColor.BOLD + ".com");
+	public static final Random RANDOM = new Random();
 	private static Eggs instance;
 
 	private LobbyTimer lobbyTimer;
@@ -36,7 +40,7 @@ public class Eggs extends Minigame {
 		instance = this;
 
 		lobbyTimer = new LobbyTimer(this);
-		// TODO start game when timer ends
+		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
 
 		lobbyScoreboard = createLobbyScoreboard();
 		gameStage = GameStage.LOBBY;
@@ -44,6 +48,7 @@ public class Eggs extends Minigame {
 		gameConfig = new GameConfig(this);
 
 		registerListeners(new ConnectionListener(), new ChatListener());
+		registerCommand(new ForceStartCommand(), "force");
 	}
 
 	private GameBoard createLobbyScoreboard() {
@@ -92,6 +97,10 @@ public class Eggs extends Minigame {
 
 	public GameWorldConfig getGameWorldConfig() {
 		return gameConfig.getGameWorldConfig();
+	}
+
+	public int getGameTime() {
+		return gameConfig.getMinutesOfGame();
 	}
 
 	public static Eggs getInstance() {

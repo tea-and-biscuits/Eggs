@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Objects;
+import uk.co.harieo.eggs.Eggs;
 
 public class GameConfig {
 
@@ -49,13 +51,16 @@ public class GameConfig {
 
 	private void parseConfig(FileConfiguration config) {
 		minutesOfGame = config.getInt("game-time");
-		lobbyWorld = parseWorld(config, "lobby-world");
-		gameWorldConfig = new GameWorldConfig(parseWorld(config, "game-world"));
+		lobbyWorld = parseLobbyWorld(config);
+
+		List<String> worldNames = config.getStringList("game-worlds");
+		String worldName = worldNames.get(Eggs.RANDOM.nextInt(worldNames.size()));
+		gameWorldConfig = new GameWorldConfig(Bukkit.getWorld(worldName));
 	}
 
-	private World parseWorld(FileConfiguration config, String key) {
+	private World parseLobbyWorld(FileConfiguration config) {
 		String lobbyWorldName = Objects
-				.requireNonNull(config.getString(key), "Missing " + key + " value in config.yml");
+				.requireNonNull(config.getString("lobby-world"), "Missing lobby-world value in config.yml");
 		return Bukkit.getWorld(lobbyWorldName);
 	}
 

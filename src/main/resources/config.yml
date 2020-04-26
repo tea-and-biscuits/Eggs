@@ -1,3 +1,4 @@
 game-time: 5
 lobby-world: world
-game-world: world_nether
+game-worlds:
+    - world_nether
