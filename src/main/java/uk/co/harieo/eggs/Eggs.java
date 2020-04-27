@@ -1,10 +1,13 @@
 package uk.co.harieo.eggs;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.List;
 import java.util.Random;
 import uk.co.harieo.eggs.commands.ForceStartCommand;
 import uk.co.harieo.eggs.commands.MapCommand;
@@ -12,6 +15,7 @@ import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.ChatListener;
 import uk.co.harieo.eggs.listeners.ConnectionListener;
+import uk.co.harieo.eggs.listeners.WorldProtectionListener;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.minigames.games.GameStage;
@@ -40,19 +44,23 @@ public class Eggs extends Minigame {
 	public void onEnable() {
 		instance = this;
 
-		lobbyTimer = new LobbyTimer(this);
-		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
-
 		gameConfig = new GameConfig(this);
 		if (getGameWorldConfig().isLoaded()) {
 			gameStage = GameStage.LOBBY;
-			registerListeners(new ConnectionListener(), new ChatListener()); // These should not happen on error
 		} else {
 			gameStage = GameStage.ERROR;
 		}
 
+		lobbyTimer = new LobbyTimer(this);
+		List<String> joinMessages = gameConfig.getJoinMessages();
+		if (!joinMessages.isEmpty()) { // If they are empty, it will use the default message instead
+			lobbyTimer.setCountdownMessages(joinMessages);
+		}
+		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
+
 		lobbyScoreboard = createLobbyScoreboard();
 
+		registerListeners(new ConnectionListener(), new ChatListener(), new WorldProtectionListener());
 		registerCommand(new ForceStartCommand(), "force");
 		registerCommand(new MapCommand(), "maps", "map");
 	}
@@ -102,6 +110,10 @@ public class Eggs extends Minigame {
 		return gameStage;
 	}
 
+	public void setGameStage(GameStage gameStage) {
+		this.gameStage = gameStage;
+	}
+
 	public World getLobbyWorld() {
 		return gameConfig.getLobbyWorld();
 	}
@@ -120,6 +132,11 @@ public class Eggs extends Minigame {
 
 	public static String formatMessage(String message) {
 		return PREFIX + message;
+	}
+
+	public static void pingAll() {
+		Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(),
+				Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.5F));
 	}
 
 }

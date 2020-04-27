@@ -14,10 +14,12 @@ import uk.co.harieo.eggs.scoreboard.TeamElement;
 import uk.co.harieo.eggs.scoreboard.TeamScoreElement;
 import uk.co.harieo.eggs.scoreboard.TimeLeftElement;
 import uk.co.harieo.eggs.teams.EggsTeam;
+import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
 import uk.co.harieo.minigames.scoreboards.elements.ConstantElement;
 import uk.co.harieo.minigames.teams.Team;
 import uk.co.harieo.minigames.timing.GameTimer;
+import uk.co.harieo.minigames.timing.Timer;
 
 public class GameStartStage {
 
@@ -40,6 +42,9 @@ public class GameStartStage {
 	}
 
 	public static void startGame() {
+		Eggs plugin = Eggs.getInstance();
+		plugin.setGameStage(GameStage.STARTING);
+
 		Bukkit.getOnlinePlayers().forEach(player -> {
 			EggsTeam assignedTeam;
 			if (EggsTeam.isInTeam(player)) {
@@ -55,6 +60,23 @@ public class GameStartStage {
 			teleportToSpawn(player, assignedTeam);
 			gameBoard.render(Eggs.getInstance(), player, 20);
 		});
+
+		Timer timer = new Timer(Eggs.getInstance(), 10);
+		timer.setOnTimerTick(tick -> {
+			int secondsLeft = timer.getSecondsLeft();
+			if (secondsLeft != 0 && (secondsLeft <= 5 || secondsLeft == 10)) {
+				Bukkit.broadcastMessage(Eggs.formatMessage(
+						ChatColor.GRAY + "The game will start in " + ChatColor.GREEN + secondsLeft + " seconds..."));
+				Eggs.pingAll();
+			}
+		});
+		timer.setOnTimerEnd(end -> enterGame(plugin));
+		timer.start();
+	}
+
+	private static void enterGame(Eggs plugin) {
+		plugin.getGameWorldConfig().deleteSpawnWalls();
+		plugin.setGameStage(GameStage.IN_GAME);
 	}
 
 	public static void renderScoreboard(Player player) {

@@ -2,3 +2,10 @@ game-time: 5
 lobby-world: world
 game-worlds:
     - world_nether
+join-messages:
+    - 'Restocking the battle bread'
+    - 'Painting the eggs pretty colours'
+    - 'Checking the Quack-o-Meter for optimal quack'
+    - 'Checking for high quality memes on social media'
+    - 'Refuelling the magic chicken core to increase egg production'
+    - 'Petting the local cats and manticores'

@@ -25,22 +25,25 @@ public class ConnectionListener implements Listener {
 		player.setFoodLevel(20);
 		player.setHealth(20);
 
-		if (plugin.getGameStage() == GameStage.LOBBY) {
+		boolean isLobbyStage = plugin.getGameStage() == GameStage.LOBBY;
+		if (isLobbyStage || plugin.getGameStage() == GameStage.ERROR) {
 			event.setJoinMessage(Eggs.formatMessage(
 					ChatColor.GREEN + player.getName() + ChatColor.GRAY + " comes in with a " + ChatColor.YELLOW
 							+ "splat" + ChatColor.GRAY + "!"));
 			player.teleport(plugin.getLobbyWorld().getSpawnLocation());
 			plugin.renderLobbyScoreboard(player);
 
-			LobbyTimer timer = plugin.getLobbyTimer();
-			int playerCount = Bukkit.getOnlinePlayers().size();
-			// Update the lobby timer based on how many players are online
-			if (playerCount >= plugin.getMaxPlayers()) {
-				timer.updateToFull();
-			} else if (playerCount >= plugin.getOptimalPlayers()) {
-				timer.updateToOptimal();
-			} else {
-				timer.updateToInsufficient();
+			if (isLobbyStage) { // Don't mess with the timer on error
+				LobbyTimer timer = plugin.getLobbyTimer();
+				int playerCount = Bukkit.getOnlinePlayers().size();
+				// Update the lobby timer based on how many players are online
+				if (playerCount >= plugin.getMaxPlayers()) {
+					timer.updateToFull();
+				} else if (playerCount >= plugin.getOptimalPlayers()) {
+					timer.updateToOptimal();
+				} else {
+					timer.updateToInsufficient();
+				}
 			}
 		} else {
 			event.setJoinMessage(null);

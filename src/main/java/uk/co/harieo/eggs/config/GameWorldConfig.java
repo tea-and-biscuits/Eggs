@@ -103,6 +103,11 @@ public class GameWorldConfig {
 		return loaded;
 	}
 
+	public void deleteSpawnWalls() {
+		deleteSpawnWall(orangeWall, EggsTeam.ORANGE);
+		deleteSpawnWall(yellowWall, EggsTeam.YELLOW);
+	}
+
 	public static void createSpawnWall(Cuboid wall, EggsTeam team) {
 		wall.forEach(block -> {
 			if (block.isEmpty()) {
