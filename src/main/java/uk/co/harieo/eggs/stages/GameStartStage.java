@@ -76,6 +76,7 @@ public class GameStartStage {
 
 	private static void enterGame(Eggs plugin) {
 		plugin.getGameWorldConfig().deleteSpawnWalls();
+		gameTimer.start();
 		plugin.setGameStage(GameStage.IN_GAME);
 	}
 
