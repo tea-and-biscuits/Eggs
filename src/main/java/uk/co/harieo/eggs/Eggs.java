@@ -7,6 +7,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.Random;
 import uk.co.harieo.eggs.commands.ForceStartCommand;
+import uk.co.harieo.eggs.commands.MapCommand;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.ChatListener;
@@ -42,13 +43,18 @@ public class Eggs extends Minigame {
 		lobbyTimer = new LobbyTimer(this);
 		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
 
-		lobbyScoreboard = createLobbyScoreboard();
-		gameStage = GameStage.LOBBY;
-
 		gameConfig = new GameConfig(this);
+		if (getGameWorldConfig().isLoaded()) {
+			gameStage = GameStage.LOBBY;
+			registerListeners(new ConnectionListener(), new ChatListener()); // These should not happen on error
+		} else {
+			gameStage = GameStage.ERROR;
+		}
 
-		registerListeners(new ConnectionListener(), new ChatListener());
+		lobbyScoreboard = createLobbyScoreboard();
+
 		registerCommand(new ForceStartCommand(), "force");
+		registerCommand(new MapCommand(), "maps", "map");
 	}
 
 	private GameBoard createLobbyScoreboard() {
@@ -59,6 +65,11 @@ public class Eggs extends Minigame {
 		gameBoard.addBlankLine();
 		gameBoard.addLine(new ConstantElement(ChatColor.GOLD + ChatColor.BOLD.toString() + "Time Left"));
 		gameBoard.addLine(lobbyTimer);
+		if (gameStage == GameStage.ERROR) {
+			gameBoard.addBlankLine();
+			gameBoard.addLine(new ConstantElement(ChatColor.RED + ChatColor.BOLD.toString() + "Server Error"));
+			gameBoard.addLine(new ConstantElement("Game Offline"));
+		}
 		gameBoard.addBlankLine();
 		gameBoard.addLine(IP_ELEMENT);
 		return gameBoard;

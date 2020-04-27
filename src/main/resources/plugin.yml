@@ -2,6 +2,7 @@ main: uk.co.harieo.eggs.Eggs
 version: 1.0.0
 name: Eggs
 author: Harieo
+api-version: '1.15'
 depend:
     - MinigamesCore
 
@@ -9,8 +10,22 @@ commands:
     force:
         description: 'Forces the game to start'
         permission: 'quacktopia.minigames.force'
+    maps:
+        description: 'Formats a game map'
+        permission: 'quacktopia.minigames.map'
+        aliases:
+            - map
 
 permissions:
+    quacktopia.minigames.*:
+        description: 'Allows use of all minigame admin commands'
+        default: op
+        children:
+            - quacktopia.minigames.force
+            - quacktopia.minigames.map
     quacktopia.minigames.force:
         description: 'Allows the use of /force'
+        default: op
+    quacktopia.minigames.map:
+        description: 'Allows the use of /maps for map formatting'
         default: op

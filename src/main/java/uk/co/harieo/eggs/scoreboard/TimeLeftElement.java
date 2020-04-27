@@ -1,5 +1,6 @@
 package uk.co.harieo.eggs.scoreboard;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import uk.co.harieo.eggs.stages.GameStartStage;
@@ -20,7 +21,7 @@ public class TimeLeftElement implements RenderableElement {
 			if (seconds == 0) {
 				return minutes + " minutes";
 			} else {
-				return minutes + " minutes, " + seconds + " seconds";
+				return ChatColor.WHITE.toString() + minutes + " minutes, " + seconds + " seconds";
 			}
 		}
 	}

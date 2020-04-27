@@ -1,5 +1,6 @@
 package uk.co.harieo.eggs.scoreboard;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import uk.co.harieo.eggs.teams.EggsTeam;
@@ -13,7 +14,7 @@ public class TeamElement implements RenderableElement {
 		EggsTeam team = EggsTeam.getTeam(player);
 		if (team != null) {
 			Team teamData = team.getTeam();
-			return teamData.getChatColor() + teamData.getTeamName().toUpperCase();
+			return teamData.getChatColor() + ChatColor.BOLD.toString() + teamData.getTeamName() + " Team";
 		} else {
 			return "No Team";
 		}

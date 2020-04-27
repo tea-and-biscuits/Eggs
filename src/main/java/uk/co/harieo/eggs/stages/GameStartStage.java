@@ -21,7 +21,7 @@ import uk.co.harieo.minigames.timing.GameTimer;
 
 public class GameStartStage {
 
-	public static final GameTimer gameTimer = new GameTimer(Eggs.getInstance(), Eggs.getInstance().getGameTime());
+	public static final GameTimer gameTimer = new GameTimer(Eggs.getInstance(), Eggs.getInstance().getGameTime() * 60);
 	private static final GameBoard gameBoard = new GameBoard(ChatColor.GREEN + ChatColor.BOLD.toString() + "Eggs",
 			DisplaySlot.SIDEBAR);
 
