@@ -15,6 +15,8 @@ commands:
         permission: 'quacktopia.minigames.map'
         aliases:
             - map
+    team:
+        description: 'Allows you to join a team with /team'
 
 permissions:
     quacktopia.minigames.*:

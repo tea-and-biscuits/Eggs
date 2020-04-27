@@ -69,6 +69,12 @@ public enum EggsTeam {
 	}
 
 	public static void setTeam(Player player, EggsTeam team) {
+		if (ORANGE.getTeam().isTeamMember(player)) {
+			ORANGE.getTeam().removeTeamMember(player);
+		}
+		if (YELLOW.getTeam().isTeamMember(player)) {
+			YELLOW.getTeam().removeTeamMember(player);
+		}
 		team.getTeam().addTeamMember(player);
 	}
 

@@ -1,9 +1,6 @@
 package uk.co.harieo.eggs;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
@@ -11,15 +8,18 @@ import java.util.List;
 import java.util.Random;
 import uk.co.harieo.eggs.commands.ForceStartCommand;
 import uk.co.harieo.eggs.commands.MapCommand;
+import uk.co.harieo.eggs.commands.TeamCommand;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.ChatListener;
 import uk.co.harieo.eggs.listeners.ConnectionListener;
+import uk.co.harieo.eggs.listeners.HotbarHandler;
 import uk.co.harieo.eggs.listeners.WorldProtectionListener;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.games.Minigame;
+import uk.co.harieo.minigames.menus.MenuItem;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
 import uk.co.harieo.minigames.scoreboards.elements.ConstantElement;
 import uk.co.harieo.minigames.timing.LobbyTimer;
@@ -59,10 +59,18 @@ public class Eggs extends Minigame {
 		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
 
 		lobbyScoreboard = createLobbyScoreboard();
+		HotbarHandler.setHotbarItem(3, new MenuItem(Material.ORANGE_WOOL)
+				.setName(ChatColor.GOLD + ChatColor.BOLD.toString() + "Join Orange Team")
+				.setOnClick(player -> player.chat("/team orange")));
+		HotbarHandler.setHotbarItem(5, new MenuItem(Material.YELLOW_WOOL)
+				.setName(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Join Yellow Team")
+				.setOnClick(player -> player.chat("/team yellow")));
 
-		registerListeners(new ConnectionListener(), new ChatListener(), new WorldProtectionListener());
+		registerListeners(new ConnectionListener(), new ChatListener(), new WorldProtectionListener(),
+				new HotbarHandler());
 		registerCommand(new ForceStartCommand(), "force");
 		registerCommand(new MapCommand(), "maps", "map");
+		registerCommand(new TeamCommand(), "team");
 	}
 
 	private GameBoard createLobbyScoreboard() {
