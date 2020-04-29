@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import uk.co.harieo.eggs.Eggs;
-import uk.co.harieo.eggs.players.CoinsHandler;
+import uk.co.harieo.eggs.purchasables.CoinsHandler;
 import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.MinigamesCore;
 import uk.co.harieo.minigames.games.GameStage;
@@ -38,10 +38,22 @@ public class GameEndStage {
 		if (plugin.getGameStage() == GameStage.IN_GAME) {
 			plugin.setGameStage(GameStage.ENDING);
 
+			EggsTeam opposingTeam;
+			if (team == EggsTeam.ORANGE) {
+				opposingTeam = EggsTeam.YELLOW;
+			} else {
+				opposingTeam = EggsTeam.ORANGE;
+			}
+
 			Team apiTeam = team.getTeam();
+			Team opposingApiTeam = opposingTeam.getTeam();
 			sendGlobalTitleAndMessage(
 					apiTeam.getChatColor() + ChatColor.BOLD.toString() + apiTeam.getTeamName().toUpperCase()
-							+ " TEAM WINS");
+							+ " TEAM WINS",
+					ChatColor.GRAY + "They got " + apiTeam.getChatColor() + (team.getScore() - opposingTeam.getScore())
+							+ " more points " + ChatColor.GRAY + "than the " + opposingApiTeam.getChatColor()
+							+ opposingApiTeam.getTeamName() + " Team " + ChatColor.GRAY + "at " + opposingApiTeam
+							.getChatColor() + opposingTeam.getScore());
 			apiTeam.getOnlineTeamMembers().forEach(player ->
 					sendTripleFirework(player, firework -> {
 						FireworkMeta fireworkMeta = firework.getFireworkMeta();
@@ -58,18 +70,21 @@ public class GameEndStage {
 		Eggs plugin = Eggs.getInstance();
 		if (plugin.getGameStage() == GameStage.IN_GAME) {
 			plugin.setGameStage(GameStage.ENDING);
-			sendGlobalTitleAndMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "It's a Draw");
+			sendGlobalTitleAndMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "It's a Draw", null);
 			setGlobalScoreboard(setDrawScoreboard());
 			selfDestruct();
 		}
 	}
 
-	private static void sendGlobalTitleAndMessage(String text) {
+	private static void sendGlobalTitleAndMessage(String text, String subHeading) {
 		Bukkit.getOnlinePlayers().forEach(player -> {
 			player.sendTitle(text, null, 20,
 					7 * 20, 20);
 			player.sendMessage("");
 			player.sendMessage(Eggs.formatMessage(text));
+			if (subHeading != null) {
+				player.sendMessage(Eggs.formatMessage(subHeading));
+			}
 			player.sendMessage("");
 		});
 	}

@@ -54,6 +54,7 @@ public class Eggs extends Minigame {
 			lobbyTimer.setCountdownMessages(joinMessages);
 		}
 		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
+		lobbyTimer.setPrefix(PREFIX);
 
 		lobbyScoreboard = createLobbyScoreboard();
 		HotbarHandler.setHotbarItem(3, new MenuItem(Material.ORANGE_WOOL)

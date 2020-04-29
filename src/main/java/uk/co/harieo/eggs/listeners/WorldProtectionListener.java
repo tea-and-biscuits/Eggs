@@ -4,9 +4,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+
+import uk.co.harieo.eggs.Eggs;
+import uk.co.harieo.minigames.games.GameStage;
 
 public class WorldProtectionListener implements Listener {
 
@@ -33,6 +37,13 @@ public class WorldProtectionListener implements Listener {
 	@EventHandler
 	public void onHandSwap(PlayerSwapHandItemsEvent event) {
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (Eggs.getInstance().getGameStage() != GameStage.IN_GAME) {
+			event.setCancelled(true);
+		}
 	}
 
 }

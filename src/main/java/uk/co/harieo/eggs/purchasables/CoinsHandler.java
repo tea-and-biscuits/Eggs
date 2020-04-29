@@ -1,4 +1,4 @@
-package uk.co.harieo.eggs.players;
+package uk.co.harieo.eggs.purchasables;
 
 import org.bukkit.entity.Player;
 

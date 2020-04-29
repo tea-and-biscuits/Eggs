@@ -28,7 +28,7 @@ public class ChatListener implements Listener {
 
 		Bukkit.broadcastMessage(
 				prefix + ChatColor.RESET + player.getDisplayName() + " " + ChatColor.DARK_GRAY + Eggs.ARROWS
-						+ ChatColor.WHITE + " ");
+						+ ChatColor.WHITE + " " + event.getMessage());
 	}
 
 }

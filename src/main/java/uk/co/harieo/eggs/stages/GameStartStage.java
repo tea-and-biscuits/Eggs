@@ -37,9 +37,13 @@ public class GameStartStage {
 		gameBoard.addLine(new ConstantElement(ChatColor.GOLD + ChatColor.BOLD.toString() + "Your Coins"));
 		gameBoard.addLine(new CoinsElement());
 		gameBoard.addBlankLine();
-		gameBoard.addLine(new TeamElement());
-		gameBoard.addLine(new TeamScoreElement());
+		gameBoard.addLine(new TeamElement(EggsTeam.ORANGE));
+		gameBoard.addLine(new TeamScoreElement(EggsTeam.ORANGE));
 		gameBoard.addBlankLine();
+		gameBoard.addLine(new TeamElement(EggsTeam.YELLOW));
+		gameBoard.addLine(new TeamScoreElement(EggsTeam.YELLOW));
+		gameBoard.addBlankLine();
+
 		gameBoard.addLine(Eggs.IP_ELEMENT);
 
 		gameTimer.setPrefix(Eggs.PREFIX);
