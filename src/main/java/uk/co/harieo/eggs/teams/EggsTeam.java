@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
 import uk.co.harieo.eggs.config.GameWorldConfig;
+import uk.co.harieo.eggs.stages.GameEndStage;
 import uk.co.harieo.minigames.teams.Team;
 
 public enum EggsTeam {
@@ -37,6 +38,9 @@ public enum EggsTeam {
 
 	public void setScore(int score) {
 		this.score = score;
+		if (GameEndStage.hasTeamWon(this)) {
+			GameEndStage.declareWinner(this);
+		}
 	}
 
 	public String getSpawnKey() {
@@ -76,6 +80,7 @@ public enum EggsTeam {
 			YELLOW.getTeam().removeTeamMember(player);
 		}
 		team.getTeam().addTeamMember(player);
+		player.setDisplayName(team.getTeam().getChatColor() + player.getName());
 	}
 
 	public static boolean isInTeam(Player player) {

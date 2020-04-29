@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
@@ -64,6 +63,13 @@ public class HotbarHandler implements Listener {
 			hotbarItems.replace(slot, item);
 		} else {
 			hotbarItems.put(slot, item);
+		}
+	}
+
+	public static void floodHotbar(MenuItem item) {
+		clearHotbarItems();
+		for (int i = 0; i < 9; i++) {
+			setHotbarItem(i, item);
 		}
 	}
 

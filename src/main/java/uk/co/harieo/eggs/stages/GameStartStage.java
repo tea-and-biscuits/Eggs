@@ -9,6 +9,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import java.util.List;
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.config.GameWorldConfig;
+import uk.co.harieo.eggs.listeners.HotbarHandler;
+import uk.co.harieo.eggs.players.EggCannonItem;
 import uk.co.harieo.eggs.scoreboard.CoinsElement;
 import uk.co.harieo.eggs.scoreboard.TeamElement;
 import uk.co.harieo.eggs.scoreboard.TeamScoreElement;
@@ -39,6 +41,20 @@ public class GameStartStage {
 		gameBoard.addLine(new TeamScoreElement());
 		gameBoard.addBlankLine();
 		gameBoard.addLine(Eggs.IP_ELEMENT);
+
+		gameTimer.setPrefix(Eggs.PREFIX);
+		gameTimer.setOnTimerTick(tick -> onTimerTick());
+		gameTimer.setOnTimerEnd(end -> {
+			int orangeScore = EggsTeam.ORANGE.getScore();
+			int yellowScore = EggsTeam.YELLOW.getScore();
+			if (orangeScore > yellowScore) {
+				GameEndStage.declareWinner(EggsTeam.ORANGE);
+			} else if (yellowScore > orangeScore) {
+				GameEndStage.declareWinner(EggsTeam.YELLOW);
+			} else {
+				GameEndStage.declareDraw();
+			}
+		});
 	}
 
 	public static void startGame() {
@@ -61,6 +77,10 @@ public class GameStartStage {
 			gameBoard.render(Eggs.getInstance(), player, 20);
 		});
 
+		// Takes away the team chooser items
+		HotbarHandler.clearHotbarItems();
+		HotbarHandler.giveHotbarItemsToAll();
+
 		Timer timer = new Timer(Eggs.getInstance(), 10);
 		timer.setOnTimerTick(tick -> {
 			int secondsLeft = timer.getSecondsLeft();
@@ -77,6 +97,10 @@ public class GameStartStage {
 	private static void enterGame(Eggs plugin) {
 		plugin.getGameWorldConfig().deleteSpawnWalls();
 		gameTimer.start();
+
+		HotbarHandler.setHotbarItem(4, new EggCannonItem());
+		HotbarHandler.giveHotbarItemsToAll();
+
 		plugin.setGameStage(GameStage.IN_GAME);
 	}
 
@@ -87,9 +111,12 @@ public class GameStartStage {
 	private static int yellowSpawnIndex = 0;
 	private static int orangeSpawnIndex = 0;
 
-	private static void teleportToSpawn(Player player, EggsTeam team) {
-		GameWorldConfig worldConfig = Eggs.getInstance().getGameWorldConfig();
+	public static void teleportToSpawn(Player player, EggsTeam team) {
+		player.teleport(getSpawnLocation(team));
+	}
 
+	public static Location getSpawnLocation(EggsTeam team) {
+		GameWorldConfig worldConfig = Eggs.getInstance().getGameWorldConfig();
 		Location location;
 		if (team == EggsTeam.ORANGE) {
 			List<Location> orangeSpawns = worldConfig.getOrangeSpawns();
@@ -109,7 +136,38 @@ public class GameStartStage {
 			}
 		}
 
-		player.teleport(location);
+		return location;
+	}
+
+	private static void onTimerTick() {
+		String message = null;
+		int seconds = gameTimer.getSecondsLeft();
+		if (seconds == 120) {
+			message = ChatColor.GRAY + "The game will end in " + ChatColor.YELLOW + "2 minutes " + ChatColor.GRAY
+					+ "and highest score wins!";
+		} else if (seconds == 60) {
+			message = ChatColor.GRAY + "There is only " + ChatColor.YELLOW + "1 minute left" + ChatColor.GRAY + "!";
+		} else if (seconds != 0 && (seconds == 30 || seconds == 15 || seconds <= 5)) {
+			Team team = null;
+			if (EggsTeam.ORANGE.getScore() > EggsTeam.YELLOW.getScore()) {
+				team = EggsTeam.ORANGE.getTeam();
+			} else if (EggsTeam.YELLOW.getScore() > EggsTeam.ORANGE.getScore()) {
+				team = EggsTeam.YELLOW.getTeam();
+			}
+
+			if (team == null) {
+				message = ChatColor.GRAY + "The game will be a draw in " + ChatColor.YELLOW + seconds + " seconds...";
+			} else {
+				message = team.getChatColor() + team.getTeamName() + " Team " + ChatColor.GRAY + "will win for "
+						+ ChatColor.LIGHT_PURPLE + "highest score " + ChatColor.GRAY + "in " + ChatColor.GREEN + seconds
+						+ " seconds...";
+			}
+		}
+
+		if (message != null) {
+			Bukkit.broadcastMessage(Eggs.formatMessage(message));
+			Eggs.pingAll();
+		}
 	}
 
 }

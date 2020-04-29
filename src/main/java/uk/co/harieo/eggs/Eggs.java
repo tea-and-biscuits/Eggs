@@ -11,10 +11,7 @@ import uk.co.harieo.eggs.commands.MapCommand;
 import uk.co.harieo.eggs.commands.TeamCommand;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
-import uk.co.harieo.eggs.listeners.ChatListener;
-import uk.co.harieo.eggs.listeners.ConnectionListener;
-import uk.co.harieo.eggs.listeners.HotbarHandler;
-import uk.co.harieo.eggs.listeners.WorldProtectionListener;
+import uk.co.harieo.eggs.listeners.*;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.minigames.games.GameStage;
@@ -67,7 +64,7 @@ public class Eggs extends Minigame {
 				.setOnClick(player -> player.chat("/team yellow")));
 
 		registerListeners(new ConnectionListener(), new ChatListener(), new WorldProtectionListener(),
-				new HotbarHandler());
+				new HotbarHandler(), new CombatListener());
 		registerCommand(new ForceStartCommand(), "force");
 		registerCommand(new MapCommand(), "maps", "map");
 		registerCommand(new TeamCommand(), "team");
