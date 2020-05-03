@@ -54,10 +54,10 @@ public enum EggsTeam {
 	public static EggsTeam assignTeam(Player player) {
 		// Adds the player to the team with the least players to auto-balance them over time
 		if (ORANGE.getTeam().countMembers() >= YELLOW.getTeam().countMembers()) {
-			YELLOW.getTeam().addTeamMember(player);
+			setTeam(player, YELLOW);
 			return YELLOW;
 		} else {
-			ORANGE.getTeam().addTeamMember(player);
+			setTeam(player, ORANGE);
 			return ORANGE;
 		}
 	}

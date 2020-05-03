@@ -11,6 +11,7 @@ import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.HotbarHandler;
 import uk.co.harieo.eggs.players.EggCannonItem;
+import uk.co.harieo.eggs.players.ShopItem;
 import uk.co.harieo.eggs.scoreboard.CoinsElement;
 import uk.co.harieo.eggs.scoreboard.TeamElement;
 import uk.co.harieo.eggs.scoreboard.TeamScoreElement;
@@ -103,6 +104,7 @@ public class GameStartStage {
 		gameTimer.start();
 
 		HotbarHandler.setHotbarItem(4, new EggCannonItem());
+		HotbarHandler.setHotbarItem(5, new ShopItem());
 		HotbarHandler.giveHotbarItemsToAll();
 
 		plugin.setGameStage(GameStage.IN_GAME);

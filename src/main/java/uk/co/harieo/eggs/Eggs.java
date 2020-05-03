@@ -6,12 +6,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.List;
 import java.util.Random;
-import uk.co.harieo.eggs.commands.ForceStartCommand;
-import uk.co.harieo.eggs.commands.MapCommand;
-import uk.co.harieo.eggs.commands.TeamCommand;
+import uk.co.harieo.eggs.commands.*;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.*;
+import uk.co.harieo.eggs.purchasables.handlers.OmeletteHandler;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.minigames.games.GameStage;
@@ -69,6 +68,8 @@ public class Eggs extends Minigame {
 		registerCommand(new ForceStartCommand(), "force");
 		registerCommand(new MapCommand(), "maps", "map");
 		registerCommand(new TeamCommand(), "team");
+		registerCommand(new ShopCommand(), "shop");
+		registerCommand(new CoinsCommand(), "coins");
 	}
 
 	private GameBoard createLobbyScoreboard() {

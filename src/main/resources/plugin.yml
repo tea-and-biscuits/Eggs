@@ -17,6 +17,11 @@ commands:
             - map
     team:
         description: 'Allows you to join a team with /team'
+    shop:
+        description: 'Allows you to use the power-up shop'
+    coins:
+        description: 'Allows you to give coins to players with /coins'
+        permission: 'quacktopia.eggs.coins'
 
 permissions:
     quacktopia.minigames.*:
@@ -30,4 +35,7 @@ permissions:
         default: op
     quacktopia.minigames.map:
         description: 'Allows the use of /maps for map formatting'
+        default: op
+    quacktopia.eggs.coins:
+        description: 'Allows the use of /coins'
         default: op
