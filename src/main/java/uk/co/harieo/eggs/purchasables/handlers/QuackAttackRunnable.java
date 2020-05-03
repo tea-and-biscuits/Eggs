@@ -42,6 +42,7 @@ public class QuackAttackRunnable implements Runnable {
 			Chicken chicken = (Chicken) player.getWorld().spawnEntity(location, EntityType.CHICKEN);
 			chicken.setCustomName(
 					ChatColor.YELLOW + ChatColor.BOLD.toString() + NAMES[Eggs.RANDOM.nextInt(NAMES.length)]);
+			chicken.setBreedCause(player.getUniqueId()); // This is to transmit the summoner's UUID to the listener
 			spawnedChickens.add(chicken);
 			chickensLeft--;
 		}

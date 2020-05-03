@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.purchasables.CoinsHandler;
-import uk.co.harieo.eggs.purchasables.handlers.QuackAttackRunnable;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.games.GameStage;
@@ -82,6 +80,30 @@ public class CombatListener implements Listener {
 				team.setScore(team.getScore() + 1);
 				shooter.playSound(shooter.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5F, 0.5F);
 			}
+		} else if (damagingEntity instanceof Chicken && victimEntity instanceof Player) {
+			Chicken chicken = (Chicken) damagingEntity;
+			UUID uuid = chicken.getBreedCause(); // This is set in the QuackAttackRunnable to be used here
+			if (uuid != null) {
+				Player summoner = Bukkit.getPlayer(uuid);
+				Player victim = (Player) victimEntity;
+				if (summoner != null) {
+					EggsTeam summonerTeam = EggsTeam.getTeam(summoner);
+					EggsTeam victimTeam = EggsTeam.getTeam(victim);
+					if (summonerTeam != null && victimTeam != null && summonerTeam != victimTeam) {
+						event.setDamage(getDamage(summoner));
+						summoner.sendMessage(
+								ChatColor.YELLOW + ChatColor.BOLD.toString() + "Chicken " + chicken.getCustomName()
+										+ ChatColor.GRAY + " has exploded " + victim.getDisplayName());
+						broadcastWithExclusion(summoner,
+								summoner.getDisplayName() + ChatColor.GRAY + " has exploded " + victim.getDisplayName()
+										+ ChatColor.GRAY + " with a " + ChatColor.GREEN + "Quack Attack "
+										+ ChatColor.GRAY + "chicken!");
+						return;
+					}
+				}
+			}
+
+			event.setCancelled(true);
 		} else {
 			event.setCancelled(true);
 		}
