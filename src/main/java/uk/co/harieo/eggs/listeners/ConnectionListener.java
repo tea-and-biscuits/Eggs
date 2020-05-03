@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +25,12 @@ public class ConnectionListener implements Listener {
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFoodLevel(20);
-		player.setHealth(20);
+
+		AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		if (maxHealthAttribute != null) {
+			maxHealthAttribute.setBaseValue(4);
+		}
+		player.setHealth(4);
 
 		boolean isLobbyStage = plugin.getGameStage() == GameStage.LOBBY;
 		if (isLobbyStage || plugin.getGameStage() == GameStage.ERROR) {

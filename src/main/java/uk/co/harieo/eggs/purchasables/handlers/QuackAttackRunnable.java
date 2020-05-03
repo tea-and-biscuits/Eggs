@@ -2,6 +2,7 @@ package uk.co.harieo.eggs.purchasables.handlers;
 
 import org.bukkit.*;
 import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -31,7 +32,12 @@ public class QuackAttackRunnable implements Runnable {
 			Bukkit.getScheduler().runTaskLater(Eggs.getInstance(), this::selfDestruct, 20);
 		} else {
 			Location location = player.getLocation().clone();
-			location.add(Eggs.RANDOM.nextInt(9) + 1, 5, Eggs.RANDOM.nextInt(9) + 1);
+
+			int randomX = Eggs.RANDOM.nextInt(9) + 1;
+			int randomZ = Eggs.RANDOM.nextInt(9) + 1;
+			boolean negativeX = Eggs.RANDOM.nextInt(100) % 2 == 0;
+			boolean negativeZ = Eggs.RANDOM.nextInt(100) % 2 == 0;
+			location.add(negativeX ? -randomX : randomX, 3, negativeZ ? -randomZ : randomZ);
 
 			Chicken chicken = (Chicken) player.getWorld().spawnEntity(location, EntityType.CHICKEN);
 			chicken.setCustomName(

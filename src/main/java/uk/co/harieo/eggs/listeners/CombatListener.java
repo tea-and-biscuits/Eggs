@@ -7,6 +7,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.purchasables.CoinsHandler;
+import uk.co.harieo.eggs.purchasables.handlers.QuackAttackRunnable;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.games.GameStage;
@@ -101,8 +103,8 @@ public class CombatListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityCreation(EntitySpawnEvent event) {
-		if (event.getEntityType() == EntityType.CHICKEN) {
+	public void onEntityCreation(CreatureSpawnEvent event) {
+		if (event.getSpawnReason() == SpawnReason.EGG) {
 			event.setCancelled(true); // Stop chickens spawning from the eggs
 		}
 	}
@@ -128,7 +130,7 @@ public class CombatListener implements Listener {
 	}
 
 	public static double getDamage(Player player) {
-		return damageMap.getOrDefault(player.getUniqueId(), 10.0);
+		return damageMap.getOrDefault(player.getUniqueId(), 2.0);
 	}
 
 	public static void setDamage(Player player, double damage) {
