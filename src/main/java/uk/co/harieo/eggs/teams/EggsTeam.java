@@ -3,6 +3,8 @@ package uk.co.harieo.eggs.teams;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import net.md_5.bungee.api.ChatColor;
 import uk.co.harieo.eggs.config.GameWorldConfig;
@@ -21,11 +23,19 @@ public enum EggsTeam {
 	private int score = 0;
 	private final String spawnKey;
 	private final Material glassMaterial;
+	private final ItemStack leatherChestplate;
 
 	EggsTeam(Team team, String spawnKey, Material glassMaterial) {
 		this.team = team;
 		this.spawnKey = spawnKey;
 		this.glassMaterial = glassMaterial;
+
+		this.leatherChestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
+		LeatherArmorMeta meta = (LeatherArmorMeta) leatherChestplate.getItemMeta();
+		if (meta != null) {
+			meta.setColor(team.getArmorColor());
+			leatherChestplate.setItemMeta(meta);
+		}
 	}
 
 	public Team getTeam() {
@@ -49,6 +59,14 @@ public enum EggsTeam {
 
 	public Material getGlassMaterial() {
 		return glassMaterial;
+	}
+
+	public ItemStack getLeatherChestplate() {
+		return leatherChestplate;
+	}
+
+	public void setChestplate(Player player) {
+		player.getInventory().setChestplate(getLeatherChestplate());
 	}
 
 	public static EggsTeam assignTeam(Player player) {
@@ -80,6 +98,7 @@ public enum EggsTeam {
 			YELLOW.getTeam().removeTeamMember(player);
 		}
 		team.getTeam().addTeamMember(player);
+		team.setChestplate(player);
 		player.setDisplayName(team.getTeam().getChatColor() + player.getName());
 	}
 

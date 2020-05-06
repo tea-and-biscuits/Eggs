@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import uk.co.harieo.eggs.Eggs;
+import uk.co.harieo.eggs.listeners.HotbarHandler;
+import uk.co.harieo.eggs.players.HubItem;
 import uk.co.harieo.eggs.purchasables.CoinsHandler;
 import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.MinigamesCore;
@@ -62,6 +64,7 @@ public class GameEndStage {
 						firework.setFireworkMeta(fireworkMeta);
 					}));
 			setGlobalScoreboard(setWinningScoreboard(apiTeam));
+			setEndItems();
 			selfDestruct();
 		}
 	}
@@ -72,8 +75,15 @@ public class GameEndStage {
 			plugin.setGameStage(GameStage.ENDING);
 			sendGlobalTitleAndMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "It's a Draw", null);
 			setGlobalScoreboard(setDrawScoreboard());
+			setEndItems();
 			selfDestruct();
 		}
+	}
+
+	private static void setEndItems() {
+		HotbarHandler.clearHotbarItems();
+		HotbarHandler.setHotbarItem(8, new HubItem());
+		HotbarHandler.giveHotbarItemsToAll();
 	}
 
 	private static void sendGlobalTitleAndMessage(String text, String subHeading) {

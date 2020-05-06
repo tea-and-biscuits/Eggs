@@ -14,6 +14,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
 import java.util.Map;
+import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.menus.MenuItem;
 
 public class HotbarHandler implements Listener {
@@ -53,6 +54,12 @@ public class HotbarHandler implements Listener {
 	public static void giveHotbarItems(Player player) {
 		PlayerInventory inventory = player.getInventory();
 		inventory.clear();
+
+		EggsTeam team = EggsTeam.getTeam(player);
+		if (team != null) {
+			team.setChestplate(player);
+		}
+
 		for (int slot : hotbarItems.keySet()) {
 			inventory.setItem(slot, hotbarItems.get(slot).getItem());
 		}

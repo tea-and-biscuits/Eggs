@@ -10,6 +10,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.List;
 import uk.co.harieo.eggs.Eggs;
+import uk.co.harieo.eggs.listeners.CombatListener;
 
 public class QuackAttackRunnable implements Runnable {
 
@@ -50,6 +51,7 @@ public class QuackAttackRunnable implements Runnable {
 
 	public void start() {
 		this.task = Bukkit.getScheduler().runTaskTimer(Eggs.getInstance(), this, 0, 5);
+		CombatListener.disableCoins(player);
 	}
 
 	private void selfDestruct() {
@@ -62,6 +64,7 @@ public class QuackAttackRunnable implements Runnable {
 		}
 
 		spawnedChickens.clear(); // Prevents any accidental repeats
+		CombatListener.enableCoins(player);
 	}
 
 }

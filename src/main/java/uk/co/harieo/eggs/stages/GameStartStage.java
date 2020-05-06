@@ -93,7 +93,7 @@ public class GameStartStage {
 			int secondsLeft = timer.getSecondsLeft();
 			if (secondsLeft != 0 && (secondsLeft <= 5 || secondsLeft == 10)) {
 				Bukkit.broadcastMessage(Eggs.formatMessage(
-						ChatColor.GRAY + "The game will start in " + ChatColor.GREEN + secondsLeft + " seconds..."));
+						ChatColor.GRAY + "The game will start in " + ChatColor.YELLOW + secondsLeft + " seconds..."));
 				Eggs.pingAll();
 			}
 		});
@@ -105,8 +105,8 @@ public class GameStartStage {
 		plugin.getGameWorldConfig().deleteSpawnWalls();
 		gameTimer.start();
 
-		HotbarHandler.setHotbarItem(4, new EggCannonItem());
-		HotbarHandler.setHotbarItem(5, new ShopItem());
+		HotbarHandler.setHotbarItem(0, new EggCannonItem());
+		HotbarHandler.setHotbarItem(1, new ShopItem());
 		HotbarHandler.giveHotbarItemsToAll();
 
 		plugin.setGameStage(GameStage.IN_GAME);

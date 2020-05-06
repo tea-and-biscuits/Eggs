@@ -11,9 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.purchasables.CoinsHandler;
 import uk.co.harieo.eggs.stages.GameStartStage;
@@ -23,6 +21,8 @@ import uk.co.harieo.minigames.games.GameStage;
 public class CombatListener implements Listener {
 
 	private static final Map<UUID, Double> damageMap = new HashMap<>();
+	private static final List<UUID> noCoins = new ArrayList<>();
+	private static final Set<UUID> damageBuffer = new HashSet<>();
 
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent event) {
@@ -40,7 +40,7 @@ public class CombatListener implements Listener {
 				EggsTeam team = EggsTeam.getTeam(shooter);
 				EggsTeam targetTeam = EggsTeam.getTeam(target);
 
-				if (team == null || targetTeam == null || team == targetTeam) {
+				if (team == null || targetTeam == null || team == targetTeam || damageBuffer.contains(target.getUniqueId())) {
 					return; // Friendly fire
 				}
 
@@ -51,6 +51,10 @@ public class CombatListener implements Listener {
 
 	@EventHandler
 	public void onEntityDamageEntity(EntityDamageByEntityEvent event) {
+		if (Eggs.getInstance().getGameStage() != GameStage.IN_GAME) {
+			return;
+		}
+
 		Entity damagingEntity = event.getDamager();
 		Entity victimEntity = event.getEntity();
 		if (damagingEntity instanceof Egg && victimEntity instanceof Player) {
@@ -69,16 +73,21 @@ public class CombatListener implements Listener {
 					return; // Not a kill or team doesn't exist
 				}
 
+				boolean earningCoins = !noCoins.contains(shooter.getUniqueId());
 				shooter.sendMessage(Eggs.formatMessage(
 						ChatColor.GRAY + "You have killed " + target.getDisplayName()
-								+ ChatColor.GRAY
-								+ " for " + ChatColor.GREEN + "+10 Coins"));
+								+ (earningCoins ? ChatColor.GRAY + " for " + ChatColor.GREEN + "+10 Coins" : "")));
 				broadcastWithExclusion(shooter,
 						shooter.getDisplayName() + ChatColor.GRAY + " has splat " + target.getDisplayName()
 								+ ChatColor.GRAY + " to death!");
-				CoinsHandler.addCoins(shooter, 10);
+				if (earningCoins) {
+					CoinsHandler.addCoins(shooter, 10);
+				}
 				team.setScore(team.getScore() + 1);
 				shooter.playSound(shooter.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5F, 0.5F);
+
+				simulateDeath(target);
+				event.setCancelled(true);
 			}
 		} else if (damagingEntity instanceof Chicken && victimEntity instanceof Player) {
 			Chicken chicken = (Chicken) damagingEntity;
@@ -90,7 +99,7 @@ public class CombatListener implements Listener {
 					EggsTeam summonerTeam = EggsTeam.getTeam(summoner);
 					EggsTeam victimTeam = EggsTeam.getTeam(victim);
 					if (summonerTeam != null && victimTeam != null && summonerTeam != victimTeam) {
-						event.setDamage(getDamage(summoner));
+						simulateDeath(victim);
 						summoner.sendMessage(
 								ChatColor.YELLOW + ChatColor.BOLD.toString() + "Chicken " + chicken.getCustomName()
 										+ ChatColor.GRAY + " has exploded " + victim.getDisplayName());
@@ -98,7 +107,7 @@ public class CombatListener implements Listener {
 								summoner.getDisplayName() + ChatColor.GRAY + " has exploded " + victim.getDisplayName()
 										+ ChatColor.GRAY + " with a " + ChatColor.GREEN + "Quack Attack "
 										+ ChatColor.GRAY + "chicken!");
-						return;
+						summonerTeam.setScore(summonerTeam.getScore() + 1);
 					}
 				}
 			}
@@ -116,15 +125,6 @@ public class CombatListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		Player player = event.getPlayer();
-		EggsTeam team = EggsTeam.getTeam(player);
-		if (team != null) {
-			event.setRespawnLocation(GameStartStage.getSpawnLocation(team));
-		}
-	}
-
-	@EventHandler
 	public void onEntityCreation(CreatureSpawnEvent event) {
 		if (event.getSpawnReason() == SpawnReason.EGG) {
 			event.setCancelled(true); // Stop chickens spawning from the eggs
@@ -136,19 +136,23 @@ public class CombatListener implements Listener {
 		event.getDrops().clear();
 	}
 
-	@EventHandler
-	public void onRegeneration(EntityRegainHealthEvent event) {
-		if (event.getEntity() instanceof Player) {
-			event.setCancelled(true);
-		}
-	}
-
 	private void broadcastWithExclusion(Player player, String message) {
 		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 			if (onlinePlayer != player) {
 				onlinePlayer.sendMessage(Eggs.formatMessage(message));
 			}
 		}
+	}
+
+	private void simulateDeath(Player player) {
+		damageBuffer.add(player.getUniqueId());
+		player.setHealth(4);
+		player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_DEATH, 0.5F, 0.5F);
+		EggsTeam team = EggsTeam.getTeam(player);
+		if (team != null) {
+			player.teleport(GameStartStage.getSpawnLocation(team));
+		}
+		damageBuffer.remove(player.getUniqueId());
 	}
 
 	public static double getDamage(Player player) {
@@ -162,6 +166,14 @@ public class CombatListener implements Listener {
 
 	public static void resetDamage(Player player) {
 		damageMap.remove(player.getUniqueId());
+	}
+
+	public static void disableCoins(Player player) {
+		noCoins.add(player.getUniqueId());
+	}
+
+	public static void enableCoins(Player player) {
+		noCoins.remove(player.getUniqueId());
 	}
 
 }

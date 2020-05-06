@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import uk.co.harieo.eggs.Eggs;
+import uk.co.harieo.eggs.listeners.CombatListener;
 
 public class SplatRunnable implements Runnable {
 
@@ -24,6 +25,7 @@ public class SplatRunnable implements Runnable {
 	public void run() {
 		if (ticks <= 0) {
 			task.cancel();
+			CombatListener.enableCoins(player);
 		} else {
 			player.launchProjectile(Egg.class);
 			ticks -= TICKS;
@@ -32,6 +34,7 @@ public class SplatRunnable implements Runnable {
 
 	public void start() {
 		this.task = Bukkit.getScheduler().runTaskTimer(Eggs.getInstance(), this, 0, TICKS);
+		CombatListener.disableCoins(player);
 	}
 
 }

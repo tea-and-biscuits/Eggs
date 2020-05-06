@@ -36,12 +36,14 @@ public class OmeletteHandler {
 			omeletteUsers.remove(uuid);
 		}
 
+		CombatListener.disableCoins(player);
 		CombatListener.setDamage(player, 10);
 		// Stops the ability after 10 seconds
 		BukkitTask task = Bukkit.getScheduler()
 				.runTaskLater(Eggs.getInstance(), () -> {
 					CombatListener.resetDamage(player);
 					omeletteUsers.remove(player.getUniqueId());
+					CombatListener.enableCoins(player);
 					player.sendMessage(Eggs.formatMessage(ChatColor.RED + "Omelette has worn off!"));
 				}, 20 * 10);
 		omeletteUsers.put(uuid, task);
