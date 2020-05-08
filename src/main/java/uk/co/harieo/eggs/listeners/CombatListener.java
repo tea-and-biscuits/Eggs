@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.*;
@@ -40,7 +39,8 @@ public class CombatListener implements Listener {
 				EggsTeam team = EggsTeam.getTeam(shooter);
 				EggsTeam targetTeam = EggsTeam.getTeam(target);
 
-				if (team == null || targetTeam == null || team == targetTeam || damageBuffer.contains(target.getUniqueId())) {
+				if (team == null || targetTeam == null || team == targetTeam || damageBuffer
+						.contains(target.getUniqueId())) {
 					return; // Friendly fire
 				}
 
@@ -101,8 +101,9 @@ public class CombatListener implements Listener {
 					if (summonerTeam != null && victimTeam != null && summonerTeam != victimTeam) {
 						simulateDeath(victim);
 						summoner.sendMessage(
-								ChatColor.YELLOW + ChatColor.BOLD.toString() + "Chicken " + chicken.getCustomName()
-										+ ChatColor.GRAY + " has exploded " + victim.getDisplayName());
+								Eggs.formatMessage(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Chicken " + chicken
+										.getCustomName()
+										+ ChatColor.GRAY + " has exploded " + victim.getDisplayName()));
 						broadcastWithExclusion(summoner,
 								summoner.getDisplayName() + ChatColor.GRAY + " has exploded " + victim.getDisplayName()
 										+ ChatColor.GRAY + " with a " + ChatColor.GREEN + "Quack Attack "
@@ -152,7 +153,7 @@ public class CombatListener implements Listener {
 		if (team != null) {
 			player.teleport(GameStartStage.getSpawnLocation(team));
 		}
-		damageBuffer.remove(player.getUniqueId());
+		Bukkit.getScheduler().runTaskLater(Eggs.getInstance(), () -> damageBuffer.remove(player.getUniqueId()), 20 * 3);
 	}
 
 	public static double getDamage(Player player) {
