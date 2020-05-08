@@ -43,6 +43,7 @@ public class HotbarHandler implements Listener {
 			int clickedSlot = inventory.getHeldItemSlot();
 			if (hotbarItems.containsKey(clickedSlot)) {
 				hotbarItems.get(clickedSlot).onClick(player);
+				event.setCancelled(true);
 			}
 		}
 	}
