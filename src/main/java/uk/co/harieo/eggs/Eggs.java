@@ -48,9 +48,9 @@ public class Eggs extends Minigame {
 		}
 
 		lobbyTimer = new LobbyTimer(this);
-		List<String> joinMessages = gameConfig.getJoinMessages();
-		if (!joinMessages.isEmpty()) { // If they are empty, it will use the default message instead
-			lobbyTimer.setCountdownMessages(joinMessages);
+		List<String> timerMessages = gameConfig.getTimerMessages();
+		if (!timerMessages.isEmpty()) { // If they are empty, it will use the default message instead
+			lobbyTimer.setCountdownMessages(timerMessages);
 		}
 		lobbyTimer.setOnTimerEnd(end -> GameStartStage.startGame());
 		lobbyTimer.setPrefix(PREFIX);

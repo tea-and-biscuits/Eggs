@@ -2,7 +2,7 @@ game-time: 5
 lobby-world: world
 game-worlds:
     - world_nether
-join-messages:
+timer-messages:
     - 'Restocking the battle bread'
     - 'Painting the eggs pretty colours'
     - 'Checking the Quack-o-Meter for optimal quack'

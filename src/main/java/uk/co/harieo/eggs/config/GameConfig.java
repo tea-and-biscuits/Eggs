@@ -19,7 +19,7 @@ public class GameConfig {
 	private int minutesOfGame = 5;
 	private World lobbyWorld;
 	private GameWorldConfig gameWorldConfig;
-	private List<String> joinMessages;
+	private List<String> timerMessages;
 
 	public GameConfig(JavaPlugin plugin) {
 		try {
@@ -52,7 +52,7 @@ public class GameConfig {
 
 	private void parseConfig(FileConfiguration config) {
 		minutesOfGame = config.getInt("game-time");
-		joinMessages = config.getStringList("join-messages");
+		timerMessages = config.getStringList("timer-messages");
 		lobbyWorld = parseLobbyWorld(config);
 
 		List<String> worldNames = config.getStringList("game-worlds");
@@ -70,8 +70,8 @@ public class GameConfig {
 		return minutesOfGame;
 	}
 
-	public List<String> getJoinMessages() {
-		return joinMessages;
+	public List<String> getTimerMessages() {
+		return timerMessages;
 	}
 
 	public World getLobbyWorld() {
