@@ -36,6 +36,9 @@ permissions:
     quacktopia.minigames.map:
         description: 'Allows the use of /maps for map formatting'
         default: op
+    quacktopia.minigames.spectate:
+        description: 'Allows you to join a game while it is in progress'
+        default: op
     quacktopia.eggs.coins:
         description: 'Allows the use of /coins'
         default: op

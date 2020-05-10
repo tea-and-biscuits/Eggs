@@ -123,6 +123,7 @@ public class CombatListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		event.setDeathMessage(null);
 		event.setKeepInventory(true);
+		simulateDeath(event.getEntity());
 	}
 
 	@EventHandler

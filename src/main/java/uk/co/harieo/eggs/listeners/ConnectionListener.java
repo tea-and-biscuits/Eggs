@@ -8,8 +8,11 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.stages.GameStartStage;
@@ -19,11 +22,18 @@ import uk.co.harieo.minigames.timing.LobbyTimer;
 public class ConnectionListener implements Listener {
 
 	@EventHandler
+	public void onPlayerLogin(PlayerLoginEvent event) {
+		if (Eggs.getInstance().getGameStage() != GameStage.LOBBY && !event.getPlayer()
+				.hasPermission("quacktopia.minigames.spectate")) {
+			event.disallow(Result.KICK_OTHER, "This game is in-progress");
+		}
+	}
+
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		Eggs plugin = Eggs.getInstance();
 
-		player.setGameMode(GameMode.SURVIVAL);
 		player.setFoodLevel(20);
 
 		AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -39,6 +49,7 @@ public class ConnectionListener implements Listener {
 							+ "splat" + ChatColor.GRAY + "!"));
 			player.teleport(plugin.getLobbyWorld().getSpawnLocation());
 			plugin.renderLobbyScoreboard(player);
+			player.setGameMode(GameMode.SURVIVAL);
 
 			if (isLobbyStage) { // Don't mess with the timer on error
 				LobbyTimer timer = plugin.getLobbyTimer();
@@ -54,7 +65,6 @@ public class ConnectionListener implements Listener {
 			}
 		} else {
 			event.setJoinMessage(null);
-			player.setGameMode(GameMode.SPECTATOR);
 			GameStartStage.renderScoreboard(player);
 
 			boolean isSpawned = false;
@@ -67,8 +77,11 @@ public class ConnectionListener implements Listener {
 				player.teleport(plugin.getLobbyWorld().getSpawnLocation());
 			}
 
+			Bukkit.getScheduler().runTaskLater(Eggs.getInstance(), () -> player.setGameMode(GameMode.SPECTATOR), 20 * 2);
+
 			player.sendMessage(
 					Eggs.formatMessage(ChatColor.GRAY + "You have joined mid-game so we've made you a spectator!"));
+			player.getInventory().clear();
 			Bukkit.getOnlinePlayers().forEach(onlinePlayer -> onlinePlayer.hidePlayer(plugin, player));
 		}
 	}

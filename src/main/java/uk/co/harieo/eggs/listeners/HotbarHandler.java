@@ -10,11 +10,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
 import java.util.Map;
+import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.teams.EggsTeam;
+import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.menus.MenuItem;
 
 public class HotbarHandler implements Listener {
@@ -23,7 +26,9 @@ public class HotbarHandler implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		giveHotbarItems(event.getPlayer());
+		if (Eggs.getInstance().getGameStage() != GameStage.IN_GAME) {
+			giveHotbarItems(event.getPlayer());
+		}
 	}
 
 	@EventHandler
@@ -41,7 +46,9 @@ public class HotbarHandler implements Listener {
 		Action action = event.getAction();
 		if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
 			int clickedSlot = inventory.getHeldItemSlot();
-			if (hotbarItems.containsKey(clickedSlot)) {
+			ItemStack clickedItem = inventory.getItem(clickedSlot);
+			if (hotbarItems.containsKey(clickedSlot) && clickedItem != null &&
+					clickedItem.getType() == hotbarItems.get(clickedSlot).getItem().getType()) {
 				hotbarItems.get(clickedSlot).onClick(player);
 				event.setCancelled(true);
 			}
