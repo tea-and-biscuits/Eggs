@@ -19,6 +19,7 @@ import uk.co.harieo.eggs.scoreboard.TeamElement;
 import uk.co.harieo.eggs.scoreboard.TeamScoreElement;
 import uk.co.harieo.eggs.scoreboard.TimeLeftElement;
 import uk.co.harieo.eggs.teams.EggsTeam;
+import uk.co.harieo.minigames.MinigamesCore;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
 import uk.co.harieo.minigames.scoreboards.elements.ConstantElement;
@@ -67,6 +68,7 @@ public class GameStartStage {
 	public static void startGame() {
 		Eggs plugin = Eggs.getInstance();
 		plugin.setGameStage(GameStage.STARTING);
+		MinigamesCore.setAcceptingPlayers(false);
 
 		Bukkit.getOnlinePlayers().forEach(player -> {
 			EggsTeam assignedTeam;
