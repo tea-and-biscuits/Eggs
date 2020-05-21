@@ -19,6 +19,7 @@ import uk.co.harieo.eggs.scoreboard.TeamElement;
 import uk.co.harieo.eggs.scoreboard.TeamScoreElement;
 import uk.co.harieo.eggs.scoreboard.TimeLeftElement;
 import uk.co.harieo.eggs.teams.EggsTeam;
+import uk.co.harieo.eggs.teams.TabTeamProcessor;
 import uk.co.harieo.minigames.MinigamesCore;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
@@ -34,6 +35,7 @@ public class GameStartStage {
 			DisplaySlot.SIDEBAR);
 
 	static {
+		gameBoard.getTabListFactory().injectProcessor(new TabTeamProcessor());
 		gameBoard.addBlankLine();
 		gameBoard.addLine(new ConstantElement(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Time Left"));
 		gameBoard.addLine(new TimeLeftElement());
@@ -85,6 +87,7 @@ public class GameStartStage {
 			teleportToSpawn(player, assignedTeam);
 			gameBoard.render(Eggs.getInstance(), player, 20);
 		});
+		gameBoard.getTabListFactory().injectAllPlayers();
 
 		// Takes away the team chooser items
 		HotbarHandler.clearHotbarItems();
@@ -178,6 +181,10 @@ public class GameStartStage {
 			Bukkit.broadcastMessage(Eggs.formatMessage(message));
 			Eggs.pingAll();
 		}
+	}
+
+	public static void updateTabListFactory() {
+		gameBoard.getTabListFactory().injectAllPlayers();
 	}
 
 }

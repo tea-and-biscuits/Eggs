@@ -7,8 +7,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import net.md_5.bungee.api.ChatColor;
+import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.stages.GameEndStage;
+import uk.co.harieo.minigames.scoreboards.tablist.modules.Affix;
 import uk.co.harieo.minigames.teams.Team;
 
 public enum EggsTeam {
@@ -24,6 +26,7 @@ public enum EggsTeam {
 	private final String spawnKey;
 	private final Material glassMaterial;
 	private final ItemStack leatherChestplate;
+	private final Affix affix;
 
 	EggsTeam(Team team, String spawnKey, Material glassMaterial) {
 		this.team = team;
@@ -36,6 +39,8 @@ public enum EggsTeam {
 			meta.setColor(team.getArmorColor());
 			leatherChestplate.setItemMeta(meta);
 		}
+
+		this.affix = new Affix(name()).setPrefix(team.getChatColor() + team.getTeamName() + ChatColor.RESET + " ");
 	}
 
 	public Team getTeam() {
@@ -69,6 +74,10 @@ public enum EggsTeam {
 		player.getInventory().setChestplate(getLeatherChestplate());
 	}
 
+	public Affix getAffix() {
+		return affix;
+	}
+
 	public static EggsTeam assignTeam(Player player) {
 		// Adds the player to the team with the least players to auto-balance them over time
 		if (ORANGE.getTeam().countMembers() >= YELLOW.getTeam().countMembers()) {
@@ -100,6 +109,7 @@ public enum EggsTeam {
 		team.getTeam().addTeamMember(player);
 		team.setChestplate(player);
 		player.setDisplayName(team.getTeam().getChatColor() + player.getName());
+		Eggs.updateTabListFactories();
 	}
 
 	public static boolean isInTeam(Player player) {

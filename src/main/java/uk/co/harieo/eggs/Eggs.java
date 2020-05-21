@@ -13,6 +13,7 @@ import uk.co.harieo.eggs.listeners.*;
 import uk.co.harieo.eggs.purchasables.handlers.OmeletteHandler;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
+import uk.co.harieo.eggs.teams.TabTeamProcessor;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.games.Minigame;
 import uk.co.harieo.minigames.menus.MenuItem;
@@ -74,6 +75,7 @@ public class Eggs extends Minigame {
 
 	private GameBoard createLobbyScoreboard() {
 		GameBoard gameBoard = new GameBoard(ChatColor.GREEN + ChatColor.BOLD.toString() + "Eggs", DisplaySlot.SIDEBAR);
+		gameBoard.getTabListFactory().injectProcessor(new TabTeamProcessor());
 		gameBoard.addBlankLine();
 		gameBoard.addLine(new ConstantElement(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Players"));
 		gameBoard.addLine(new PlayerCountElement());
@@ -144,6 +146,10 @@ public class Eggs extends Minigame {
 	public static void pingAll() {
 		Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(),
 				Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5F, 0.5F));
+	}
+
+	public static void updateTabListFactories() {
+		getInstance().lobbyScoreboard.getTabListFactory().injectAllPlayers();
 	}
 
 }

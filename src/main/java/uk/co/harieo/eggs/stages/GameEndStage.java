@@ -18,6 +18,7 @@ import uk.co.harieo.eggs.listeners.HotbarHandler;
 import uk.co.harieo.eggs.players.HubItem;
 import uk.co.harieo.eggs.purchasables.CoinsHandler;
 import uk.co.harieo.eggs.teams.EggsTeam;
+import uk.co.harieo.eggs.teams.TabTeamProcessor;
 import uk.co.harieo.minigames.MinigamesCore;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
@@ -30,6 +31,10 @@ public class GameEndStage {
 	public static final int WINNING_SCORE = 50;
 	private static final GameBoard endingScoreboard = new GameBoard(
 			ChatColor.GREEN + ChatColor.BOLD.toString() + "Game Over", DisplaySlot.SIDEBAR);
+
+	static {
+		endingScoreboard.getTabListFactory().injectProcessor(new TabTeamProcessor());
+	}
 
 	public static boolean hasTeamWon(EggsTeam team) {
 		return team.getScore() >= WINNING_SCORE;
@@ -154,6 +159,7 @@ public class GameEndStage {
 
 	private static void setGlobalScoreboard(GameBoard gameBoard) {
 		Bukkit.getOnlinePlayers().forEach(player -> gameBoard.render(Eggs.getInstance(), player, 20 * 20));
+		gameBoard.getTabListFactory().injectAllPlayers();
 	}
 
 	private static void selfDestruct() {
@@ -166,6 +172,10 @@ public class GameEndStage {
 		});
 		timer.setOnTimerEnd(end -> Bukkit.getServer().shutdown());
 		timer.start();
+	}
+
+	public static void updateTabListFactory() {
+		endingScoreboard.getTabListFactory().injectAllPlayers();
 	}
 
 }
