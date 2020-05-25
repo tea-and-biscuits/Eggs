@@ -2,6 +2,7 @@ package uk.co.harieo.eggs.config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,7 +58,15 @@ public class GameConfig {
 
 		List<String> worldNames = config.getStringList("game-worlds");
 		String worldName = worldNames.get(Eggs.RANDOM.nextInt(worldNames.size()));
-		gameWorldConfig = new GameWorldConfig(Bukkit.getWorld(worldName));
+		System.out.println("Loading " + worldName + " for the game...");
+
+		World world = Bukkit.getWorld(worldName);
+		if (world == null) { // Probably not loaded
+			WorldCreator creator = new WorldCreator(worldName);
+			world = Bukkit.createWorld(creator);
+		}
+
+		gameWorldConfig = new GameWorldConfig(world);
 	}
 
 	private World parseLobbyWorld(FileConfiguration config) {
