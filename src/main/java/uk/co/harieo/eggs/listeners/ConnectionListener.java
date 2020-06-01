@@ -12,9 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import uk.co.harieo.eggs.Eggs;
+import uk.co.harieo.eggs.stages.GameEndStage;
 import uk.co.harieo.eggs.stages.GameStartStage;
+import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.timing.LobbyTimer;
 
@@ -82,6 +85,26 @@ public class ConnectionListener implements Listener {
 					Eggs.formatMessage(ChatColor.GRAY + "You have joined mid-game so we've made you a spectator!"));
 			player.getInventory().clear();
 			Bukkit.getOnlinePlayers().forEach(onlinePlayer -> onlinePlayer.hidePlayer(plugin, player));
+		}
+	}
+
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		if (Eggs.getInstance().getGameStage() == GameStage.IN_GAME) {
+			int newPlayerCount = Bukkit.getOnlinePlayers().size() - 1;
+			if (newPlayerCount == 1) {
+				for (Player onlinePlayer : Bukkit.getOnlinePlayers()) { // Need to find the last remaining player
+					if (!onlinePlayer.equals(player)) { // Make sure it's not the player which is quitting
+						EggsTeam team = EggsTeam.getTeam(onlinePlayer);
+						if (team != null) {
+							GameEndStage.declareWinner(team);
+						}
+					}
+				}
+			} else if (newPlayerCount < 1) {
+				GameEndStage.declareDraw();
+			}
 		}
 	}
 
