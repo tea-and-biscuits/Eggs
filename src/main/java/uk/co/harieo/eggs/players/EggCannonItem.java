@@ -15,8 +15,11 @@ public class EggCannonItem extends MenuItem {
 		setName(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Egg Cannon 9000");
 		setLore(Collections.singletonList(ChatColor.GRAY + "Right Click to Shoot"));
 		setOnClick(player -> {
-			player.launchProjectile(Egg.class);
-			OmeletteHandler.onRegularEggLaunch(player);
+			if (HitBuffer.getHitsInLastSecond(player) < 5) {
+				player.launchProjectile(Egg.class);
+				OmeletteHandler.onRegularEggLaunch(player);
+				HitBuffer.addHit(player);
+			}
 		});
 	}
 

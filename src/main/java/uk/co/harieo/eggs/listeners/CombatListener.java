@@ -39,8 +39,8 @@ public class CombatListener implements Listener {
 				EggsTeam team = EggsTeam.getTeam(shooter);
 				EggsTeam targetTeam = EggsTeam.getTeam(target);
 
-				if (team == null || targetTeam == null || team == targetTeam || damageBuffer
-						.contains(target.getUniqueId())) {
+				if (team == null || targetTeam == null || team == targetTeam
+						|| damageBuffer.contains(target.getUniqueId())) {
 					return; // Friendly fire
 				}
 

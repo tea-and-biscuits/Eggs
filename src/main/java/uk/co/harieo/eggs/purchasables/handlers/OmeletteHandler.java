@@ -49,4 +49,8 @@ public class OmeletteHandler {
 		omeletteUsers.put(uuid, task);
 	}
 
+	public static boolean isUsingOmlette(Player player) {
+		return omeletteUsers.containsKey(player.getUniqueId());
+	}
+
 }
