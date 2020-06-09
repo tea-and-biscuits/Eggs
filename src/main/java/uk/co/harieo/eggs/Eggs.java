@@ -10,7 +10,6 @@ import uk.co.harieo.eggs.commands.*;
 import uk.co.harieo.eggs.config.GameConfig;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.*;
-import uk.co.harieo.eggs.purchasables.handlers.OmeletteHandler;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
 import uk.co.harieo.eggs.teams.TabTeamProcessor;
@@ -26,8 +25,7 @@ public class Eggs extends Minigame {
 	public static final char ARROWS = '»';
 	public static final String PREFIX =
 			ChatColor.GREEN.toString() + ChatColor.BOLD + "Eggs " + ChatColor.DARK_GRAY + ARROWS + " ";
-	public static final ConstantElement IP_ELEMENT = new ConstantElement(
-			ChatColor.GRAY + ChatColor.BOLD.toString() + "play." + ChatColor.YELLOW + ChatColor.BOLD
+	public static final ConstantElement IP_ELEMENT = new ConstantElement(ChatColor.YELLOW + ChatColor.BOLD.toString()
 					+ "Quacktopia" + ChatColor.GRAY + ChatColor.BOLD + ".com");
 	public static final Random RANDOM = new Random();
 	private static Eggs instance;
