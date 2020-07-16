@@ -65,11 +65,11 @@ public class CombatListener implements Listener {
 			if (source instanceof Player) {
 				Player shooter = (Player) source;
 
-				EggsTeam team = EggsTeam.getTeam(shooter);
+				EggsTeam shooterTeam = EggsTeam.getTeam(shooter);
 				EggsTeam targetTeam = EggsTeam.getTeam(target);
 
-				boolean isSameTeam = targetTeam != null && team == targetTeam;
-				if (getDamage(shooter) < target.getHealth() || team == null || isSameTeam) {
+				boolean isSameTeam = targetTeam != null && shooterTeam == targetTeam;
+				if (getDamage(shooter) < target.getHealth() || shooterTeam == null || isSameTeam) {
 					return; // Not a kill or team doesn't exist
 				}
 
@@ -78,12 +78,15 @@ public class CombatListener implements Listener {
 						ChatColor.GRAY + "You have killed " + target.getDisplayName()
 								+ (earningCoins ? ChatColor.GRAY + " for " + ChatColor.GREEN + "+10 Coins" : "")));
 				broadcastWithExclusion(shooter,
-						shooter.getDisplayName() + ChatColor.GRAY + " has splat " + target.getDisplayName()
+						shooterTeam.getTeam().getChatColor() + shooter.getName()
+								+ ChatColor.GRAY + " has splat "
+								+ (targetTeam != null ? targetTeam.getTeam().getChatColor() : ChatColor.YELLOW) + target
+								.getName()
 								+ ChatColor.GRAY + " to death!");
 				if (earningCoins) {
 					CoinsHandler.addCoins(shooter, 10);
 				}
-				team.setScore(team.getScore() + 1);
+				shooterTeam.setScore(shooterTeam.getScore() + 1);
 				shooter.playSound(shooter.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5F, 0.5F);
 
 				simulateDeath(target);
