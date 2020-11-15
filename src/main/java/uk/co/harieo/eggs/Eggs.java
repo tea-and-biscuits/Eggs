@@ -4,6 +4,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import uk.co.harieo.eggs.commands.*;
@@ -12,15 +14,18 @@ import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.listeners.*;
 import uk.co.harieo.eggs.scoreboard.PlayerCountElement;
 import uk.co.harieo.eggs.stages.GameStartStage;
+import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.eggs.teams.TabTeamProcessor;
+import uk.co.harieo.minigames.games.DefaultMinigame;
 import uk.co.harieo.minigames.games.GameStage;
-import uk.co.harieo.minigames.games.Minigame;
 import uk.co.harieo.minigames.menus.MenuItem;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
 import uk.co.harieo.minigames.scoreboards.elements.ConstantElement;
+import uk.co.harieo.minigames.teams.PlayerBasedTeam;
+import uk.co.harieo.minigames.teams.TeamHandler;
 import uk.co.harieo.minigames.timing.LobbyTimer;
 
-public class Eggs extends Minigame {
+public class Eggs extends DefaultMinigame {
 
 	public static final char ARROWS = '»';
 	public static final String PREFIX =
@@ -34,6 +39,7 @@ public class Eggs extends Minigame {
 	private GameBoard lobbyScoreboard;
 	private GameStage gameStage = GameStage.STARTING;
 	private GameConfig gameConfig;
+	private TeamHandler<PlayerBasedTeam> teamHandler;
 
 	@Override
 	public void onEnable() {
@@ -61,6 +67,12 @@ public class Eggs extends Minigame {
 		HotbarHandler.setHotbarItem(5, new MenuItem(Material.YELLOW_WOOL)
 				.setName(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Join Yellow Team")
 				.setOnClick(player -> player.chat("/team yellow")));
+
+		List<PlayerBasedTeam> teams = new ArrayList<>();
+		for (EggsTeam team : EggsTeam.values()) {
+			teams.add(team.getTeam());
+		}
+		teamHandler = new TeamHandler<>(teams, 12);
 
 		registerListeners(new ConnectionListener(), new ChatListener(), new WorldProtectionListener(),
 				new HotbarHandler(), new CombatListener());
@@ -131,6 +143,10 @@ public class Eggs extends Minigame {
 
 	public int getGameTime() {
 		return gameConfig.getMinutesOfGame();
+	}
+
+	public TeamHandler<PlayerBasedTeam> getTeamHandler() {
+		return teamHandler;
 	}
 
 	public static Eggs getInstance() {

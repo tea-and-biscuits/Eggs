@@ -78,9 +78,9 @@ public class CombatListener implements Listener {
 						ChatColor.GRAY + "You have killed " + target.getDisplayName()
 								+ (earningCoins ? ChatColor.GRAY + " for " + ChatColor.GREEN + "+10 Coins" : "")));
 				broadcastWithExclusion(shooter,
-						shooterTeam.getTeam().getChatColor() + shooter.getName()
+						shooterTeam.getTeam().getColour().getChatColor() + shooter.getName()
 								+ ChatColor.GRAY + " has splat "
-								+ (targetTeam != null ? targetTeam.getTeam().getChatColor() : ChatColor.YELLOW) + target
+								+ (targetTeam != null ? targetTeam.getTeam().getColour().getChatColor() : ChatColor.YELLOW) + target
 								.getName()
 								+ ChatColor.GRAY + " to death!");
 				if (earningCoins) {

@@ -13,6 +13,7 @@ import java.util.UUID;
 import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.teams.EggsTeam;
 import uk.co.harieo.minigames.games.GameStage;
+import uk.co.harieo.minigames.teams.PlayerBasedTeam;
 import uk.co.harieo.minigames.teams.Team;
 
 public class TeamCommand implements CommandExecutor {
@@ -49,15 +50,15 @@ public class TeamCommand implements CommandExecutor {
 				if (EggsTeam.isInTeam(player) && EggsTeam.getTeam(player) == eggsTeam) {
 					player.sendMessage(Eggs.formatMessage(ChatColor.RED + "You are already on that team!"));
 				} else {
-					Team apiTeam = eggsTeam.getTeam();
+					PlayerBasedTeam apiTeam = eggsTeam.getTeam();
 					EggsTeam oppositeTeam = eggsTeam == EggsTeam.ORANGE ? EggsTeam.YELLOW : EggsTeam.ORANGE;
-					if (apiTeam.countMembers() > oppositeTeam.getTeam().countMembers() + 1) {
+					if (apiTeam.getMembers().size() > oppositeTeam.getTeam().getMembers().size() + 1) {
 						player.sendMessage(
 								Eggs.formatMessage(ChatColor.RED + "There are too many people on that team!"));
 					} else {
 						EggsTeam.setTeam(player, eggsTeam);
 						player.sendMessage(Eggs.formatMessage(
-								ChatColor.GRAY + "You have joined the " + apiTeam.getChatColor() + apiTeam.getTeamName()
+								ChatColor.GRAY + "You have joined the " + apiTeam.getColour().getChatColor() + apiTeam.getName()
 										+ " Team!"));
 					}
 
