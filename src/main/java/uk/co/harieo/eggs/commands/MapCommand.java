@@ -153,7 +153,7 @@ public class MapCommand implements CommandExecutor {
 			}
 		}
 
-		String teamName = team.getTeam().getTeamName();
+		String teamName = team.getTeam().getName();
 		if (count < 2) {
 			player.sendMessage(Eggs.formatMessage(
 					ChatColor.RED + "There are only " + count + " corner(s) for the " + teamName + " team's spawn wall!"));
@@ -198,7 +198,7 @@ public class MapCommand implements CommandExecutor {
 
 			Team apiTeam = team.getTeam();
 			player.sendMessage(Eggs.formatMessage(
-					ChatColor.GRAY + "Set current location to a " + apiTeam.getChatColor() + apiTeam.getTeamName() + " "
+					ChatColor.GRAY + "Set current location to a " + apiTeam.getColour().getChatColor() + apiTeam.getName() + " "
 							+ ChatColor.GRAY
 							+ "spawn point!"));
 		}

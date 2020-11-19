@@ -44,52 +44,52 @@ public class CombatListener implements Listener {
 					return; // Friendly fire
 				}
 
-				target.damage(getDamage(shooter));
+				double damage = getDamage(shooter);
+				if (handleShooting(shooter, target, damage)) {
+					target.damage(damage);
+				}
 			}
 		}
 	}
 
-	@EventHandler
-	public void onEntityDamageEntity(EntityDamageByEntityEvent event) {
+	public boolean handleShooting(Player damagingEntity, Player victimEntity, double damage) {
 		if (Eggs.getInstance().getGameStage() != GameStage.IN_GAME) {
-			return;
+			return false;
 		}
 
+		EggsTeam shooterTeam = EggsTeam.getTeam(damagingEntity);
+		EggsTeam targetTeam = EggsTeam.getTeam(victimEntity);
+
+		boolean isSameTeam = targetTeam != null && shooterTeam == targetTeam;
+		if (damage < victimEntity.getHealth() || shooterTeam == null || isSameTeam) {
+			return true; // Not a kill or team doesn't exist
+		}
+
+		boolean earningCoins = !noCoins.contains(damagingEntity.getUniqueId());
+		damagingEntity.sendMessage(Eggs.formatMessage(
+				ChatColor.GRAY + "You have killed " + victimEntity.getDisplayName()
+						+ (earningCoins ? ChatColor.GRAY + " for " + ChatColor.GREEN + "+10 Coins" : "")));
+		broadcastWithExclusion(damagingEntity,
+				shooterTeam.getTeam().getColour().getChatColor() + damagingEntity.getName()
+						+ ChatColor.GRAY + " has splat "
+						+ (targetTeam != null ? targetTeam.getTeam().getColour().getChatColor() : ChatColor.YELLOW)
+						+ victimEntity.getName()
+						+ ChatColor.GRAY + " to death!");
+		if (earningCoins) {
+			CoinsHandler.addCoins(damagingEntity, 10);
+		}
+		shooterTeam.setScore(shooterTeam.getScore() + 1);
+		damagingEntity.playSound(damagingEntity.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5F, 0.5F);
+
+		simulateDeath(victimEntity);
+		return false;
+	}
+
+	@EventHandler
+	public void onEntityDamage(EntityDamageByEntityEvent event) {
 		Entity damagingEntity = event.getDamager();
 		Entity victimEntity = event.getEntity();
-		if (damagingEntity instanceof Egg && victimEntity instanceof Player) {
-			Player target = (Player) victimEntity;
-
-			Egg egg = (Egg) damagingEntity;
-			ProjectileSource source = egg.getShooter();
-			if (source instanceof Player) {
-				Player shooter = (Player) source;
-
-				EggsTeam team = EggsTeam.getTeam(shooter);
-				EggsTeam targetTeam = EggsTeam.getTeam(target);
-
-				boolean isSameTeam = targetTeam != null && team == targetTeam;
-				if (getDamage(shooter) < target.getHealth() || team == null || isSameTeam) {
-					return; // Not a kill or team doesn't exist
-				}
-
-				boolean earningCoins = !noCoins.contains(shooter.getUniqueId());
-				shooter.sendMessage(Eggs.formatMessage(
-						ChatColor.GRAY + "You have killed " + target.getDisplayName()
-								+ (earningCoins ? ChatColor.GRAY + " for " + ChatColor.GREEN + "+10 Coins" : "")));
-				broadcastWithExclusion(shooter,
-						shooter.getDisplayName() + ChatColor.GRAY + " has splat " + target.getDisplayName()
-								+ ChatColor.GRAY + " to death!");
-				if (earningCoins) {
-					CoinsHandler.addCoins(shooter, 10);
-				}
-				team.setScore(team.getScore() + 1);
-				shooter.playSound(shooter.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.5F, 0.5F);
-
-				simulateDeath(target);
-				event.setCancelled(true);
-			}
-		} else if (damagingEntity instanceof Chicken && victimEntity instanceof Player) {
+		if (damagingEntity instanceof Chicken && victimEntity instanceof Player) {
 			Chicken chicken = (Chicken) damagingEntity;
 			UUID uuid = chicken.getBreedCause(); // This is set in the QuackAttackRunnable to be used here
 			if (uuid != null) {

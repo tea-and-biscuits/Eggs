@@ -72,13 +72,13 @@ public class SpawnCuboidSubcommand implements Listener {
 		if (cuboidsInProgress.containsKey(uuid)) {
 			player.sendMessage(Eggs.formatMessage(
 					ChatColor.RED + "You are already editing a cuboid for the " +
-							cuboidsInProgress.get(uuid).getTeam().getTeam().getTeamName()
+							cuboidsInProgress.get(uuid).getTeam().getTeam().getName()
 							+ ". Use '/maps wall cancel' to abort editing."));
 		} else {
 			cuboidsInProgress.put(uuid, new PreCuboid(team, player.getWorld()));
 			Team apiTeam = team.getTeam();
 			player.sendMessage(Eggs.formatMessage(
-					ChatColor.GRAY + "You are now editing for the " + apiTeam.getChatColor() + apiTeam.getTeamName()
+					ChatColor.GRAY + "You are now editing for the " + apiTeam.getColour().getChatColor() + apiTeam.getName()
 							+ " Team. " + ChatColor.GRAY + "Use " + ChatColor.YELLOW + "/maps wall <pos1/pos2> "
 							+ ChatColor.GRAY + "to set the 2 corners!"));
 		}

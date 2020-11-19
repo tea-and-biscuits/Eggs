@@ -111,14 +111,14 @@ public class GameWorldConfig {
 	public static void createSpawnWall(Cuboid wall, EggsTeam team) {
 		wall.forEach(block -> {
 			if (block.isEmpty()) {
-				block.setType(team.getGlassMaterial());
+				block.setType(team.getColourGroup().getGlassType());
 			}
 		});
 	}
 
 	public static void deleteSpawnWall(Cuboid wall, EggsTeam team) {
 		wall.forEach(block -> {
-			if (block.getType() == team.getGlassMaterial()) {
+			if (block.getType() == team.getColourGroup().getGlassType()) {
 				block.setType(Material.AIR);
 			}
 		});

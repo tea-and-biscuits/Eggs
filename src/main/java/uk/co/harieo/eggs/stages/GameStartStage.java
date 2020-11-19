@@ -80,8 +80,8 @@ public class GameStartStage {
 				assignedTeam = EggsTeam.assignTeam(player);
 				Team team = assignedTeam.getTeam();
 				player.sendMessage(Eggs.formatMessage(
-						ChatColor.GRAY + "You have been automatically assigned to the " + team.getChatColor() + team
-								.getTeamName() + " Team" + ChatColor.GRAY + "!"));
+						ChatColor.GRAY + "You have been automatically assigned to the " + team.getColour().getChatColor()
+								+ team.getName() + " Team" + ChatColor.GRAY + "!"));
 			}
 
 			teleportToSpawn(player, assignedTeam);
@@ -171,7 +171,7 @@ public class GameStartStage {
 			if (team == null) {
 				message = ChatColor.GRAY + "The game will be a draw in " + ChatColor.YELLOW + seconds + " seconds...";
 			} else {
-				message = team.getChatColor() + team.getTeamName() + " Team " + ChatColor.GRAY + "will win for "
+				message = team.getColour().getChatColor() + team.getName() + " Team " + ChatColor.GRAY + "will win for "
 						+ ChatColor.LIGHT_PURPLE + "highest score " + ChatColor.GRAY + "in " + ChatColor.GREEN + seconds
 						+ " seconds...";
 			}

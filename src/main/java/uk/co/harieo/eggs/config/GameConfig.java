@@ -58,7 +58,6 @@ public class GameConfig {
 
 		List<String> worldNames = config.getStringList("game-worlds");
 		String worldName = worldNames.get(Eggs.RANDOM.nextInt(worldNames.size()));
-		System.out.println("Loading " + worldName + " for the game...");
 
 		World world = Bukkit.getWorld(worldName);
 		if (world == null) { // Probably not loaded

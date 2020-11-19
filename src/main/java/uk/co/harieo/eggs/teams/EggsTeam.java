@@ -1,6 +1,5 @@
 package uk.co.harieo.eggs.teams;
 
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,39 +10,37 @@ import uk.co.harieo.eggs.Eggs;
 import uk.co.harieo.eggs.config.GameWorldConfig;
 import uk.co.harieo.eggs.stages.GameEndStage;
 import uk.co.harieo.minigames.scoreboards.tablist.modules.Affix;
-import uk.co.harieo.minigames.teams.Team;
+import uk.co.harieo.minigames.teams.ColourGroup;
+import uk.co.harieo.minigames.teams.PlayerBasedTeam;
 
 public enum EggsTeam {
 
 	// This is an enum to constrain the handler to only the provided teams and no others
-	ORANGE(new Team("Orange", ChatColor.GOLD, Color.ORANGE, 5), GameWorldConfig.ORANGE_SPAWNS_KEY,
-			Material.ORANGE_STAINED_GLASS),
-	YELLOW(new Team("Yellow", ChatColor.YELLOW, Color.YELLOW, 5), GameWorldConfig.YELLOW_SPAWNS_KEY,
-			Material.YELLOW_STAINED_GLASS);
+	ORANGE("Orange", ColourGroup.GOLD, GameWorldConfig.ORANGE_SPAWNS_KEY),
+	YELLOW("Yellow", ColourGroup.YELLOW, GameWorldConfig.YELLOW_SPAWNS_KEY);
 
-	private final Team team;
+	private final PlayerBasedTeam team;
+
 	private int score = 0;
 	private final String spawnKey;
-	private final Material glassMaterial;
 	private final ItemStack leatherChestplate;
 	private final Affix affix;
 
-	EggsTeam(Team team, String spawnKey, Material glassMaterial) {
-		this.team = team;
+	EggsTeam(String name, ColourGroup colourGroup, String spawnKey) {
+		this.team = new PlayerBasedTeam(name, colourGroup);
 		this.spawnKey = spawnKey;
-		this.glassMaterial = glassMaterial;
 
 		this.leatherChestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
 		LeatherArmorMeta meta = (LeatherArmorMeta) leatherChestplate.getItemMeta();
 		if (meta != null) {
-			meta.setColor(team.getArmorColor());
+			meta.setColor(colourGroup.getEquipmentColor());
 			leatherChestplate.setItemMeta(meta);
 		}
 
-		this.affix = new Affix(name()).setPrefix(team.getChatColor() + team.getTeamName() + ChatColor.RESET + " ");
+		this.affix = new Affix(name()).setPrefix(colourGroup.getChatColor() + name + ChatColor.RESET + " ");
 	}
 
-	public Team getTeam() {
+	public PlayerBasedTeam getTeam() {
 		return team;
 	}
 
@@ -62,10 +59,6 @@ public enum EggsTeam {
 		return spawnKey;
 	}
 
-	public Material getGlassMaterial() {
-		return glassMaterial;
-	}
-
 	public ItemStack getLeatherChestplate() {
 		return leatherChestplate;
 	}
@@ -78,9 +71,17 @@ public enum EggsTeam {
 		return affix;
 	}
 
+	public ColourGroup getColourGroup() {
+		return team.getColour();
+	}
+
+	public ChatColor getChatColor() {
+		return getColourGroup().getChatColor().asBungee();
+	}
+
 	public static EggsTeam assignTeam(Player player) {
 		// Adds the player to the team with the least players to auto-balance them over time
-		if (ORANGE.getTeam().countMembers() >= YELLOW.getTeam().countMembers()) {
+		if (ORANGE.getTeam().getMembers().size() >= YELLOW.getTeam().getMembers().size()) {
 			setTeam(player, YELLOW);
 			return YELLOW;
 		} else {
@@ -89,31 +90,38 @@ public enum EggsTeam {
 		}
 	}
 
+	public static void setTeam(Player player, EggsTeam team) {
+		Eggs.getInstance().getTeamHandler().setTeam(player, team.getTeam());
+		updatePlayersTeam(player, team);
+	}
+
 	public static EggsTeam getTeam(Player player) {
-		if (ORANGE.getTeam().isTeamMember(player)) {
+		if (ORANGE.getTeam().isMember(player)) {
 			return ORANGE;
-		} else if (YELLOW.getTeam().isTeamMember(player)) {
+		} else if (YELLOW.getTeam().isMember(player)) {
 			return YELLOW;
 		} else {
 			return null;
 		}
 	}
 
-	public static void setTeam(Player player, EggsTeam team) {
-		if (ORANGE.getTeam().isTeamMember(player)) {
-			ORANGE.getTeam().removeTeamMember(player);
+	private static EggsTeam getTeam(PlayerBasedTeam genericTeam) {
+		for (EggsTeam eggsTeam : values()) {
+			if (eggsTeam.getTeam().equals(genericTeam)) {
+				return eggsTeam;
+			}
 		}
-		if (YELLOW.getTeam().isTeamMember(player)) {
-			YELLOW.getTeam().removeTeamMember(player);
-		}
-		team.getTeam().addTeamMember(player);
+		return null;
+	}
+
+	public static void updatePlayersTeam(Player player, EggsTeam team) {
 		team.setChestplate(player);
-		player.setDisplayName(team.getTeam().getChatColor() + player.getName());
+		player.setDisplayName(team.getColourGroup().getChatColor() + player.getName());
 		Eggs.updateTabListFactories();
 	}
 
 	public static boolean isInTeam(Player player) {
-		return ORANGE.getTeam().isTeamMember(player) || YELLOW.getTeam().isTeamMember(player);
+		return ORANGE.getTeam().isMember(player) || YELLOW.getTeam().isMember(player);
 	}
 
 }

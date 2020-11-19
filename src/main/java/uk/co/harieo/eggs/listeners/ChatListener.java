@@ -23,7 +23,7 @@ public class ChatListener implements Listener {
 		String prefix = "";
 		if (eggsTeam != null) {
 			Team team = eggsTeam.getTeam();
-			prefix = team.getChatColor() + "[" + team.getTeamName() + "] ";
+			prefix = team.getColour().getChatColor() + "[" + team.getName() + "] ";
 		}
 
 		Bukkit.broadcastMessage(

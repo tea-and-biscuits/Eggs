@@ -21,10 +21,10 @@ public class TeamElement implements RenderableElement {
 
 		if (playerTeam != null && playerTeam == team) {
 			Team teamData = team.getTeam();
-			return teamData.getChatColor() + ChatColor.BOLD.toString() + "Your Team";
+			return teamData.getColour().getChatColor() + ChatColor.BOLD.toString() + "Your Team";
 		} else if (team != null) {
 			Team teamData = team.getTeam();
-			return teamData.getChatColor() + ChatColor.BOLD.toString() + teamData.getTeamName() + " Team";
+			return teamData.getColour().getChatColor() + ChatColor.BOLD.toString() + teamData.getName() + " Team";
 		} else {
 			return "No Team";
 		}

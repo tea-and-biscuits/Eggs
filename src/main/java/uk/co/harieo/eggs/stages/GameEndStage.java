@@ -23,6 +23,7 @@ import uk.co.harieo.minigames.MinigamesCore;
 import uk.co.harieo.minigames.games.GameStage;
 import uk.co.harieo.minigames.scoreboards.GameBoard;
 import uk.co.harieo.minigames.scoreboards.elements.ConstantElement;
+import uk.co.harieo.minigames.teams.PlayerBasedTeam;
 import uk.co.harieo.minigames.teams.Team;
 import uk.co.harieo.minigames.timing.Timer;
 
@@ -52,22 +53,25 @@ public class GameEndStage {
 				opposingTeam = EggsTeam.ORANGE;
 			}
 
-			Team apiTeam = team.getTeam();
-			Team opposingApiTeam = opposingTeam.getTeam();
+			PlayerBasedTeam apiTeam = team.getTeam();
+			PlayerBasedTeam opposingApiTeam = opposingTeam.getTeam();
+
+			ChatColor winnerColor = apiTeam.getColour().getChatColor();
+			ChatColor loserColor = opposingApiTeam.getColour().getChatColor();
 			sendGlobalTitleAndMessage(
-					apiTeam.getChatColor() + ChatColor.BOLD.toString() + apiTeam.getTeamName().toUpperCase()
+					winnerColor + ChatColor.BOLD.toString() + apiTeam.getName().toUpperCase()
 							+ " TEAM WINS",
-					ChatColor.GRAY + "They got " + apiTeam.getChatColor() + (team.getScore() - opposingTeam.getScore())
-							+ " more points " + ChatColor.GRAY + "than the " + opposingApiTeam.getChatColor()
-							+ opposingApiTeam.getTeamName() + " Team " + ChatColor.GRAY + "at " + opposingApiTeam
-							.getChatColor() + opposingTeam.getScore());
-			apiTeam.getOnlineTeamMembers().forEach(player ->
+					ChatColor.GRAY + "They got " + winnerColor + (team.getScore() - opposingTeam.getScore())
+							+ " more points " + ChatColor.GRAY + "than the " + loserColor
+							+ opposingApiTeam.getName() + " Team " + ChatColor.GRAY + "at " + loserColor + opposingTeam.getScore());
+			apiTeam.getOnlineMembers().forEach(player ->
 					sendTripleFirework(player, firework -> {
 						FireworkMeta fireworkMeta = firework.getFireworkMeta();
-						fireworkMeta.addEffect(FireworkEffect.builder().trail(true).withColor(apiTeam.getArmorColor())
+						fireworkMeta.addEffect(FireworkEffect.builder().trail(true).withColor(apiTeam.getColour().getEquipmentColor())
 								.with(Type.BALL).build());
 						firework.setFireworkMeta(fireworkMeta);
 					}));
+
 			setGlobalScoreboard(setWinningScoreboard(apiTeam));
 			setEndItems();
 			selfDestruct();
@@ -111,14 +115,15 @@ public class GameEndStage {
 		}
 	}
 
-	private static GameBoard setWinningScoreboard(Team winningTeam) {
+	private static GameBoard setWinningScoreboard(PlayerBasedTeam winningTeam) {
 		endingScoreboard.addBlankLine();
+		ChatColor winningColor = winningTeam.getColour().getChatColor();
 		endingScoreboard.addLine(new ConstantElement(
-				winningTeam.getChatColor() + ChatColor.BOLD.toString() + winningTeam.getTeamName() + " Team Wins"));
+				winningColor + ChatColor.BOLD.toString() + winningTeam.getName() + " Team Wins"));
 		endingScoreboard.addLine(new ConstantElement(ChatColor.GRAY + "To the Victors, the Spoils..."));
 		endingScoreboard.addBlankLine();
-		for (Player player : winningTeam.getOnlineTeamMembers()) {
-			endingScoreboard.addLine(new ConstantElement(winningTeam.getChatColor() + player.getName()));
+		for (Player player : winningTeam.getOnlineMembers()) {
+			endingScoreboard.addLine(new ConstantElement(winningColor + player.getName()));
 		}
 		return endingScoreboard;
 	}
